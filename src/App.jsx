@@ -1,6 +1,6 @@
 // App.jsx — основной компонент с навигацией и роутингом
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/NavBar";
 import Footer from "./components/Footer";
 import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/Dashboard";
