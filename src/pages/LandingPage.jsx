@@ -9,7 +9,7 @@ export default function LandingPage() {
           <div className="text-left max-w-xl">
             <h1 className="text-5xl font-bold mb-4">Squadly</h1>
             <p className="text-xl text-gray-700 mb-6">
-              Платформа, объединяющая молодых предпринимателей, которые ищут окружение или сооснователей для запуска проектов.
+              Платформа, объединяющая активную молодежь, которая ищет окружение или сооснователей для запуска проектов.
             </p>
             <Link
               to="/app"
