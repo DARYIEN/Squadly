@@ -57,9 +57,40 @@ function LandingPage() {
   );
 }
 
+function EventCard({ title, date, details, paid }) {
+  return (
+    <div className="p-4 bg-white rounded shadow hover:shadow-lg transition cursor-pointer">
+      <h3 className="text-xl font-semibold mb-1">{title}</h3>
+      <p className="text-sm text-gray-600">🗓 {date} | {details} | 💰 {paid ? paid : 'Бесплатно'}</p>
+    </div>
+  );
+}
+
+function CandidateCard({ name, role, goal, more }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="p-4 bg-white rounded shadow mb-3">
+      <div className="flex justify-between items-center">
+        <div>
+          <h4 className="text-lg font-bold">{name}</h4>
+          <p className="text-sm text-gray-600">{role} — {goal}</p>
+        </div>
+        <button
+          onClick={() => setOpen(!open)}
+          className="text-blue-500 text-sm"
+        >
+          {open ? 'Скрыть' : 'Подробнее'}
+        </button>
+      </div>
+      {open && <p className="mt-2 text-sm text-gray-700">{more}</p>}
+    </div>
+  );
+}
+
 function Dashboard() {
   const [tab, setTab] = useState("events");
-  const [form, setForm] = useState({ name: "", role: "", project: "" });
+  const [searchTab, setSearchTab] = useState("people");
+  const [form, setForm] = useState({ name: "", role: "", project: "", time: "", portfolio: "", contact: "" });
   const [submitted, setSubmitted] = useState(false);
 
   return (
@@ -73,28 +104,32 @@ function Dashboard() {
 
       {tab === "events" && (
         <div className="grid gap-4">
-          <div className="p-4 bg-white rounded shadow">
-            <h3 className="text-xl font-semibold">Pitch-сессия "Идея за 3 минуты"</h3>
-            <p className="text-sm text-gray-600">🗓 25 мая, 18:00 | 👥 Спикеры: Иван Новиков, Алина Старк | 💰 Бесплатно</p>
-          </div>
-          <div className="p-4 bg-white rounded shadow">
-            <h3 className="text-xl font-semibold">Спид-нетворкинг: найди CTO за 30 минут</h3>
-            <p className="text-sm text-gray-600">🗓 30 мая, 17:00 | 👥 Открыт всем | 💰 Бесплатно</p>
-          </div>
-          <div className="p-4 bg-white rounded shadow">
-            <h3 className="text-xl font-semibold">Workshop: как правильно подписать партнёрский договор</h3>
-            <p className="text-sm text-gray-600">🗓 2 июня, 16:00 | 💼 Только для зарегистрированных | 💰 199₽</p>
-          </div>
+          <EventCard title="Pitch-сессия 'Идея за 3 минуты'" date="25 мая, 18:00" details="Спикеры: Иван Новиков, Алина Старк" paid={false} />
+          <EventCard title="Спид-нетворкинг: найди CTO за 30 минут" date="30 мая, 17:00" details="Открыт всем" paid={false} />
+          <EventCard title="Workshop: как подписать партнёрский договор" date="2 июня, 16:00" details="Для зарегистрированных" paid="199₽" />
         </div>
       )}
 
       {tab === "search" && (
         <div>
           <div className="mb-4">
-            <button className="px-4 py-2 mr-2 bg-gray-200 rounded">Люди</button>
-            <button className="px-4 py-2 bg-gray-200 rounded">Стартапы</button>
+            <button onClick={() => setSearchTab("people")} className={`px-4 py-2 mr-2 rounded ${searchTab === 'people' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Люди</button>
+            <button onClick={() => setSearchTab("startups")} className={`px-4 py-2 rounded ${searchTab === 'startups' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Стартапы</button>
           </div>
-          <div className="text-gray-600">🔍 Поиск партнёров пока в разработке. Скоро будет красиво 😎</div>
+
+          {searchTab === "people" && (
+            <div>
+              <CandidateCard name="Данил С." role="Дизайнер" goal="Ищу IT-команду" more="Есть опыт в UI/UX, участвовал в 3 хакатонах, умею в Figma и Protopie." />
+              <CandidateCard name="Маша Б." role="Маркетолог" goal="Присоединюсь к стартапу" more="Работала в SMM, запускала рекламу. Хочу найти команду, где нужна упаковка и лидогенерация." />
+            </div>
+          )}
+
+          {searchTab === "startups" && (
+            <div>
+              <CandidateCard name="EduFinance" role="Финтех-платформа" goal="Ищем CTO" more="Проект для школьников: учёт личных финансов, траты, цели. Есть MVP, нужен бэкендер на Node.js." />
+              <CandidateCard name="SkillBattle" role="Gamified Learning" goal="Ищем дизайнеров" more="Хочем сделать мини-игры по подготовке к ЕГЭ. Команда из 3х человек, нужен UI-дизайнер." />
+            </div>
+          )}
         </div>
       )}
 
@@ -108,31 +143,21 @@ function Dashboard() {
               }}
               className="space-y-3"
             >
-              <input
-                placeholder="Имя"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="border p-2 rounded w-full"
-              />
-              <input
-                placeholder="Ваша роль (дизайнер, разработчик...)"
-                value={form.role}
-                onChange={(e) => setForm({ ...form, role: e.target.value })}
-                className="border p-2 rounded w-full"
-              />
-              <textarea
-                placeholder="Кратко опишите вашу идею или интерес"
-                value={form.project}
-                onChange={(e) => setForm({ ...form, project: e.target.value })}
-                className="border p-2 rounded w-full"
-              />
+              <input placeholder="Имя" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="border p-2 rounded w-full" />
+              <input placeholder="Ваша роль (дизайнер, разработчик...)" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="border p-2 rounded w-full" />
+              <textarea placeholder="Опишите вашу идею / проект / интерес" value={form.project} onChange={(e) => setForm({ ...form, project: e.target.value })} className="border p-2 rounded w-full" />
+              <input placeholder="Сколько времени готовы уделять (в часах/нед)" value={form.time} onChange={(e) => setForm({ ...form, time: e.target.value })} className="border p-2 rounded w-full" />
+              <input placeholder="Портфолио / GitHub / Telegram" value={form.portfolio} onChange={(e) => setForm({ ...form, portfolio: e.target.value })} className="border p-2 rounded w-full" />
+              <input placeholder="Контакты для связи" value={form.contact} onChange={(e) => setForm({ ...form, contact: e.target.value })} className="border p-2 rounded w-full" />
               <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">Сохранить профиль</button>
             </form>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2 text-gray-700">
               <p>✅ Профиль сохранён!</p>
-              <p><strong>{form.name}</strong>, роль: {form.role}</p>
+              <p><strong>{form.name}</strong> — {form.role}</p>
               <p>Проект: {form.project}</p>
+              <p>Вовлечённость: {form.time} в неделю</p>
+              <p>Контакты: {form.portfolio} / {form.contact}</p>
             </div>
           )}
         </div>
